@@ -1,10 +1,6 @@
 # 노션 자동 반복 일정 관리
 
 상태: 개발 중
-Project task DB: @노션 자동 반복 일정 관리 제작 (https://www.notion.so/e6ebfab72d37417683dcba28094290b1?pvs=21)
-남은 Task display: 현재 상황 - 0/1 | 남은 Task: 1
-남은 Task 개수: 1
-전체 Task 개수: 1
 프로젝트 시작 년도: 2023
 프로젝트 시작 일: 2023년 4월 9일
 
