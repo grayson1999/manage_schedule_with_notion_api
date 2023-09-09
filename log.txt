@@ -1,0 +1,11 @@
+[2023.09.09/23:45:42] - Traceback (most recent call last):
+  File "C:\Users\bbt12\Desktop\auto_recurring_schedule\test_api\auto_recurring schedule\main.py", line 269, in <module>
+    raise Achieve_update_error
+Myerror.Achieve_update_error: 달성률 업데이트 중 오류가 발생했습니다.
+
+[2023.09.09/23:48:04] - Traceback (most recent call last):
+  File "C:\Users\bbt12\Desktop\auto_recurring_schedule\test_api\auto_recurring schedule\main.py", line 278, in <module>
+    raise ZeroDivisionError
+ZeroDivisionError
+
+과거 데이터 베이스 페이지 삭제 중 오류 발생
