@@ -9,3 +9,28 @@ Myerror.Achieve_update_error: 달성률 업데이트 중 오류가 발생했습�
 ZeroDivisionError
 
 과거 데이터 베이스 페이지 삭제 중 오류 발생
+[2023.09.13/21:28:00] - Traceback (most recent call last):
+  File "C:\Users\bbt12\Desktop\auto_routine_schedule\auto_routine_schedule\main.py", line 30, in <module>
+    raise Myerror.temp_raise_error("과거 데이터 베이스 삭제")
+manage_notion_package.Myerror.temp_raise_error: <unprintable temp_raise_error object>
+
+[2023.09.13/21:29:13] - Traceback (most recent call last):
+  File "C:\Users\bbt12\Desktop\auto_routine_schedule\auto_routine_schedule\main.py", line 30, in <module>
+    raise Myerror.temp_raise_error("과거 데이터 베이스 삭제")
+manage_notion_package.Myerror.temp_raise_error: <unprintable temp_raise_error object>
+
+[2023.09.13/21:30:06] - Traceback (most recent call last):
+  File "C:\Users\bbt12\Desktop\auto_routine_schedule\auto_routine_schedule\main.py", line 30, in <module>
+    raise Myerror.temp_raise_error("과거 데이터 베이스 삭제")
+manage_notion_package.Myerror.temp_raise_error: <unprintable temp_raise_error object>
+
+[2023.09.13/21:32:00] - Traceback (most recent call last):
+  File "C:\Users\bbt12\Desktop\auto_routine_schedule\auto_routine_schedule\main.py", line 30, in <module>
+    raise Myerror.temp_raise_error()
+manage_notion_package.Myerror.temp_raise_error:  오류가 발생했습니다.
+
+[2023.09.13/21:33:22] - Traceback (most recent call last):
+  File "C:\Users\bbt12\Desktop\auto_routine_schedule\auto_routine_schedule\main.py", line 40, in <module>
+    raise Myerror.temp_raise_error()
+manage_notion_package.Myerror.temp_raise_error:  오류가 발생했습니다.
+
