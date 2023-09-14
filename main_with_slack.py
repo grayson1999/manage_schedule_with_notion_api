@@ -54,4 +54,5 @@ if __name__ == "__main__":
         ##프로그램 종료
         sys.exit()
 
+    slack.slack_message_with_time("반복 일정 초기화를 정상적으로 완료했습니다.")
 
