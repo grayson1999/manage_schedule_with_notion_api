@@ -8,7 +8,7 @@ from datetime import datetime
 past_pages = notion_api.get_pages(init.PAST_DATABASE_ID)
 pages = notion_api.get_pages(init.DATABASE_ID)
 achievement_pages = notion_api.get_pages(init.ACHIEVEMENT_DATABASE_ID)
-
+medicine_pages = notion_api.get_pages(init.MEDICINE_DATABASE_ID)
 
 if __name__ == "__main__":
     ## 달성률 업데이트
@@ -59,4 +59,9 @@ if __name__ == "__main__":
         sys.exit()
 
     slack.slack_message_with_time("반복 일정 초기화를 정상적으로 완료했습니다.")
-
+    
+    ##약 루틴 초기화
+    notion_api.reset_database(init.datelist,medicine_pages)
+    slack.slack_message_with_time(
+        "\n"+slack.formating_medicine_alert(medicine_pages)+"약 루틴 초기화를 완료했습니다."
+        )

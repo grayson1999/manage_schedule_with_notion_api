@@ -2,3 +2,4 @@
 /bin
 /venv_schedule
 .pem
+add_service.py

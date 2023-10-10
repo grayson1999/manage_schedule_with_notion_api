@@ -7,6 +7,7 @@ NOTION_TOKEN = auth=os.environ.get("NOTION_TOKEN")
 DATABASE_ID = os.environ.get("CURRENT_DATABASE_ID")
 PAST_DATABASE_ID = os.environ.get("PAST_DATABASE_ID")
 ACHIEVEMENT_DATABASE_ID = os.environ.get("ACHIEVEMENT_DATABASE_ID")
+MEDICINE_DATABASE_ID = os.environ.get("MEDICINE_DATABASE_ID")
 
 headers = {
     "Authorization": "Bearer " + NOTION_TOKEN,
