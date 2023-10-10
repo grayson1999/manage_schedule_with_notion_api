@@ -1,3 +1,4 @@
 .env
 /bin
 /venv_schedule
+.pem
