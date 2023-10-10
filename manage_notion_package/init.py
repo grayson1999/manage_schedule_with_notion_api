@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 #notion_keys
-NOTION_TOKEN = os.environ.get("NOTION_TOKEN")
+NOTION_TOKEN = auth=os.environ.get("NOTION_TOKEN")
 DATABASE_ID = os.environ.get("CURRENT_DATABASE_ID")
 PAST_DATABASE_ID = os.environ.get("PAST_DATABASE_ID")
 ACHIEVEMENT_DATABASE_ID = os.environ.get("ACHIEVEMENT_DATABASE_ID")

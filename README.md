@@ -1,9 +1,3 @@
-# 노션 자동 반복 일정 관리
-
-상태: 개발 중<br>
-프로젝트 시작 년도: 2023<br>
-프로젝트 시작 일: 2023년 4월 9일<br>
-
 ### 개요
 
 노션에서는 반복 일정을 설정할 수 있지만, 정해진 요일에 진행할 수 있도록만 도움을 준다. 
@@ -30,10 +24,24 @@ ver.1.0
     1. 과거 데이터의 일정과 현재 데이터 일정이 다를 수도 있다는 점을 파악하여 데이터베이스를 초기화 후 재 작성하는 기능을 제작.
 3. 달성률 관리 데이터베이스 제작
 
+ver.1.0.1
+
+1. 모듈 화 및 라이브러리 제작
+
+ver.1.0.2
+
+1. package에 slack method 추가
+2. slack method를 포함한 main_with_slack.py 추가
+
+ver.1.0.3
+
+1. main_with_slack.py에 오류 시 slack 메세지가 전송되도록 변경
+
 추가 예정
 
 1. 백업 데이터 생성 및 오류 대응
 2. Slack 알림 기능
+3. 약 또는 비타민 루틴 기능 추가
 
 제한 사항
 
@@ -65,7 +73,7 @@ python main.py
 
 ### 참고 자료
 
-[https://github.com/jamalex/notion-py](https://github.com/jamalex/notion-py)
+https://github.com/jamalex/notion-py
 
 [How to work with the Notion API in Python - Python Engineer](https://www.python-engineer.com/posts/notion-api-python/)
 
