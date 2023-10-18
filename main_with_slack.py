@@ -62,6 +62,6 @@ if __name__ == "__main__":
     
     ##약 루틴 초기화
     notion_api.reset_database(init.datelist,medicine_pages)
-    slack.slack_message_with_time(
+    slack.slack_message(
         "\n"+slack.formating_medicine_alert(medicine_pages)+"약 루틴 초기화를 완료했습니다."
         )
