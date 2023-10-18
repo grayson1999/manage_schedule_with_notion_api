@@ -3,6 +3,7 @@ import requests
 from .init import *
 from .util import get_today_week_name
 
+ACHEVEMENT_RATE = 0
 ## get_database_source
 def get_pages(database_id, num_pages=None):
     """
@@ -114,6 +115,9 @@ def update_achievement_rate(achievement_pages,current_pages):
 
         return round(count/len(current_pages),2)
     
+    global ACHEVEMENT_RATE 
+    ACHEVEMENT_RATE = calc_achevement_rate(current_pages)
+    
     ## 달성률 UPDATE
     achievement_rate_name =""
     title_name = ""
@@ -124,7 +128,7 @@ def update_achievement_rate(achievement_pages,current_pages):
             title_name = data[0]
         elif data[1]['type'] == "number" or data[0] == "달성률":
             achievement_rate_name = data[0]
-            
+    
     ## properties dict로 변환
     convert_achi_dict = {
         "properties":{
@@ -136,7 +140,7 @@ def update_achievement_rate(achievement_pages,current_pages):
                 }]
             },
             achievement_rate_name:{
-            "number": calc_achevement_rate(current_pages)
+            "number": ACHEVEMENT_RATE
         }
         }
     }

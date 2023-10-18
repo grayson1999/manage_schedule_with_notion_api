@@ -37,16 +37,18 @@ def formating_medicine_alert(medicine_pages):
         title = page["이름"]["title"][0]["plain_text"]
         print_string +="\n"+ title+ "\n|"
         count = 0
+        check = 0
         for date in datelist:
             # □ ■
             if page[date]["checkbox"] == True:
                 print_string += date+" ■ | "
+                check += 1
             else:
                 print_string += date+" □ | "
             count+=1
             if count == 3:
                 print_string += "\n|"
-        print_string+="\n"
+        print_string+="\n"+str(check)+"회 복용\n"
     return print_string
 
 

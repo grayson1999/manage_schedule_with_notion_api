@@ -41,6 +41,11 @@ ver.1.0.5
 1. 비타민과 같은 약 주간 루틴 추적 기능 추가
 2. 약 및 비타민 루틴 DB 초기화 시 slack으로 먹은 날과 안먹은 날 알림
 
+ver.1.0.9
+2. 달성률 슬랙으로 전송
+3. 슬랙 전송 form 업데이트
+4. 기타 버그 수정
+
 추가 예정
 
 1. 백업 데이터 생성 및 오류 대응
@@ -80,3 +85,4 @@ https://github.com/jamalex/notion-py
 [How to work with the Notion API in Python - Python Engineer](https://www.python-engineer.com/posts/notion-api-python/)
 
 [Notion API & Python](https://thienqc.notion.site/Notion-API-Python-ca0fd21bc224492b8daaf37eb06289e8)
+
