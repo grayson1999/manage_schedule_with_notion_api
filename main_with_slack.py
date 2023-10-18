@@ -57,8 +57,11 @@ if __name__ == "__main__":
         slack.slack_message_with_time("현재 데이터베이스 초기화 중 오류가 발생했습니다.\n프로그램을 종료합니다.")
         ##프로그램 종료
         sys.exit()
-
-    slack.slack_message_with_time("반복 일정 초기화를 정상적으로 완료했습니다.")
+    
+    slack.slack_message_with_time(
+        "이번주 " + 
+        str(notion_api.ACHEVEMENT_RATE) + 
+        "% 달성하였습니다.\n반복 일정 초기화를 정상적으로 완료했습니다.")
     
     ##약 루틴 초기화
     notion_api.reset_database(init.datelist,medicine_pages)
