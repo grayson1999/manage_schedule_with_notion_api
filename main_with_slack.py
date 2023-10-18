@@ -59,12 +59,15 @@ if __name__ == "__main__":
         sys.exit()
     
     slack.slack_message_with_time(
-        "이번주 " + 
-        str(notion_api.ACHEVEMENT_RATE) + 
-        "% 달성하였습니다.\n반복 일정 초기화를 정상적으로 완료했습니다.")
-    
+        "\n이번주 " + str(notion_api.ACHEVEMENT_RATE) + "% 달성하였습니다.")
+        
     ##약 루틴 초기화
     notion_api.reset_database(init.datelist,medicine_pages)
     slack.slack_message(
-        "\n"+slack.formating_medicine_alert(medicine_pages)+"약 루틴 초기화를 완료했습니다."
+        "\n"+slack.formating_medicine_alert(medicine_pages)+"약 루틴 초기화를 완료했습니다.\n"
         )
+    
+    ##완료 메시지
+    slack.slack_message(
+        "notion 일정이 정상 초기화 되었습니다."
+    )
