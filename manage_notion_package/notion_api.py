@@ -113,7 +113,7 @@ def update_achievement_rate(achievement_pages,current_pages):
             if check_completed:
                 count += 1
 
-        return round(count/len(current_pages),2)
+        return round(count/len(current_pages)*100,2)
     
     global ACHEVEMENT_RATE 
     ACHEVEMENT_RATE = calc_achevement_rate(current_pages)
