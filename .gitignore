@@ -4,3 +4,5 @@
 .pem
 add_service.py
 /venv_manageSchedule
+/__pycache__
+manage_notion_package/__pycache__/
