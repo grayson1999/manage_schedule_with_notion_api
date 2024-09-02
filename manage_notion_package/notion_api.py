@@ -105,15 +105,18 @@ def delete_all_pages(past_pages):
 def update_achievement_rate(achievement_pages,current_pages):
     ## 달성률 구하기
     def calc_achevement_rate(current_pages):
-
         count = 0
         for page in current_pages:
-            ##완료 여부 가져오기
+            ## 완료 여부 가져오기
             check_completed = page['properties']["완료 여부"]["formula"]['boolean']
             if check_completed:
                 count += 1
 
-        return round((count/len(current_pages))*100,2)
+        # 백분율 계산
+        if len(current_pages) > 0:
+            return round((count / len(current_pages)) * 100, 2)
+        else:
+            return 0.0
     
     global ACHEVEMENT_RATE 
     ACHEVEMENT_RATE = calc_achevement_rate(current_pages)

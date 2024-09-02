@@ -6,3 +6,4 @@ add_service.py
 /venv_manageSchedule
 /__pycache__
 manage_notion_package/__pycache__/
+/venv_routine_server
