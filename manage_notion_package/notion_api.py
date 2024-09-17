@@ -114,9 +114,9 @@ def update_achievement_rate(achievement_pages,current_pages):
 
         # 백분율 계산
         if len(current_pages) > 0:
-            return round((count / len(current_pages)) * 100, 2)
+            return ""+round((count / len(current_pages)) * 100, 2)
         else:
-            return 0.0
+            return "0.0"
     
     global ACHEVEMENT_RATE 
     ACHEVEMENT_RATE = calc_achevement_rate(current_pages)
