@@ -10,6 +10,7 @@ def ErrorLog(error: str):
     current_time = time.strftime("%Y.%m.%d/%H:%M:%S", time.localtime(time.time()))
     with open("./Log.txt", "a",encoding="utf-8") as f:
         f.write(f"[{current_time}] - {error}\n")
+
         
 ## 주차 계산 로직 out: ex)9월 첫째주
 def get_today_week_name():

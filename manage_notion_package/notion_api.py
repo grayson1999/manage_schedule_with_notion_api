@@ -107,17 +107,19 @@ def update_achievement_rate(achievement_pages,current_pages):
     def calc_achevement_rate(current_pages):
         count = 0
         for page in current_pages:
-            ## 완료 여부 가져오기
-            check_completed = page['properties']["완료 여부"]["formula"]['boolean']
+            # Assuming '완료 여부' is a property containing a formula that evaluates to boolean
+            check_completed = page['properties'].get("완료 여부", {}).get("formula", {}).get('boolean', False)
             if check_completed:
                 count += 1
 
-        # 백분율 계산
+        # Calculate percentage achievement rate
         if len(current_pages) > 0:
-            return ""+round((count / len(current_pages)) * 100, 2)
+            achievement_rate = int(round(((count / len(current_pages)) * 100),0))
         else:
-            return "0.0"
-    
+            achievement_rate = 0
+
+        return achievement_rate  # Now returns an int
+        
     global ACHEVEMENT_RATE 
     ACHEVEMENT_RATE = calc_achevement_rate(current_pages)
     
