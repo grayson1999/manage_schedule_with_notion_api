@@ -114,7 +114,7 @@ def update_achievement_rate(achievement_pages,current_pages):
 
         # Calculate percentage achievement rate
         if len(current_pages) > 0:
-            achievement_rate = int(round(((count / len(current_pages))),0))
+            achievement_rate = int(round((count / len(current_pages)*100),0))
         else:
             achievement_rate = 0
 
