@@ -61,8 +61,6 @@ def delete_page(page_id: str):
 
 
 
-
-
 ## 현재 데이터를 past page의 과거 데이터로 이동
 def move2pastdata(current_pages):
     ##현재 데이터를 create용 데이터 구조로 변경
@@ -114,11 +112,11 @@ def update_achievement_rate(achievement_pages,current_pages):
 
         # Calculate percentage achievement rate
         if len(current_pages) > 0:
-            achievement_rate = int(round((count / len(current_pages))*100))
+            achievement_rate = round(count / len(current_pages), 4)
         else:
             achievement_rate = 0
 
-        return achievement_rate  # Now returns an int
+        return achievement_rate
         
     global ACHEVEMENT_RATE 
     ACHEVEMENT_RATE = calc_achevement_rate(current_pages)

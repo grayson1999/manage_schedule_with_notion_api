@@ -59,7 +59,7 @@ if __name__ == "__main__":
         sys.exit()
     
     slack.slack_message_with_time(
-        "\n이번주 " + str(notion_api.ACHEVEMENT_RATE) + "% 달성하였습니다.")
+        "\n이번주 " + str(notion_api.ACHEVEMENT_RATE * 100) + "% 달성하였습니다.")
         
     ##약 루틴 초기화
     notion_api.reset_database(init.datelist,medicine_pages)
