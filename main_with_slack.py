@@ -58,16 +58,14 @@ if __name__ == "__main__":
         ##프로그램 종료
         sys.exit()
     
-    slack.slack_message_with_time(
-        "\n이번주 " + str(notion_api.ACHEVEMENT_RATE * 100) + "% 달성하였습니다.")
-        
     ##약 루틴 초기화
     notion_api.reset_database(init.datelist,medicine_pages)
-    slack.slack_message(
-        "\n"+slack.formating_medicine_alert(medicine_pages)+"약 루틴 초기화를 완료했습니다.\n"
-        )
-    
-    ##완료 메시지
-    slack.slack_message(
-        "notion 일정이 정상 초기화 되었습니다."
+
+    ##주간 리포트 생성 및 전송
+    week_name = util.get_today_week_name()
+    weekly_report = slack.create_weekly_report(
+        achievement_rate=notion_api.ACHEVEMENT_RATE,
+        medicine_pages=medicine_pages,
+        week_name=week_name
     )
+    slack.slack_message(weekly_report)
