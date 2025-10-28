@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 from .init import *
+import requests
 load_dotenv()
 
 SLACK_TOKEN = os.environ.get("SLACK_TOKEN")
@@ -66,7 +67,23 @@ def create_progress_bar(percentage, length=20):
     empty = length - filled
     return "█" * filled + "▓" * empty
 
-## 주간 리포트 생성 (명언은 추후 구현)
+## 랜덤 명언 가져오기
+def get_random_advice():
+    try:
+        response = requests.get("https://korean-advice-open-api.vercel.app/api/advice", timeout=5)
+        if response.status_code == 200:
+            data = response.json()
+            author = data.get("author", "")
+            message = data.get("message", "")
+
+            return f'"{message}" - {author}'
+        else:
+            return '"작은 습관이 모여 큰 변화를 만든다"'
+    except Exception as e:
+        # API 실패 시 기본 명언 반환
+        return '"작은 습관이 모여 큰 변화를 만든다"'
+
+## 주간 리포트 생성
 def create_weekly_report(achievement_rate, medicine_pages, week_name):
     # 약 복용 현황 분석
     medicine_stats = categorize_medicine_by_completion(medicine_pages)
@@ -78,6 +95,9 @@ def create_weekly_report(achievement_rate, medicine_pages, week_name):
     # 진행바 생성
     routine_bar = create_progress_bar(achievement_rate * 100, length=15)
     medicine_bar = create_progress_bar(medicine_percentage, length=15)
+
+    # 랜덤 명언 가져오기
+    advice = get_random_advice()
 
     # 리포트 생성 (모바일 최적화 - 심플 버전)
     report = f"""━━━━━━━━━━━━━━━
@@ -98,7 +118,7 @@ def create_weekly_report(achievement_rate, medicine_pages, week_name):
  • 데이터 백업 완료
  • DB 초기화 완료
 
-💭 "작은 습관이 모여 큰 변화를 만든다"
+💭 {advice}
 
 🚀 새로운 한 주 시작! 화이팅! 💪
 ━━━━━━━━━━━━━━━"""
