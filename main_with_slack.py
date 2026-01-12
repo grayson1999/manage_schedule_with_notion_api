@@ -1,6 +1,6 @@
 from manage_notion_package import notion_api,Myerror,slack,util,init
+from manage_notion_package.logger import logger
 import traceback
-import json
 import sys
 from datetime import datetime
 
@@ -19,9 +19,7 @@ if __name__ == "__main__":
 
     except Exception:
         err = traceback.format_exc()
-        util.ErrorLog(str(err))
-        slack.slack_message_with_time("달성률 업데이트 중 오류가 발생했습니다.\n프로그램을 종료합니다.")
-        ##프로그램 종료
+        logger.error(f"달성률 업데이트 중 오류가 발생했습니다.\n{err}")
         sys.exit()
     
     
@@ -30,9 +28,7 @@ if __name__ == "__main__":
         res = notion_api.delete_all_pages(past_pages)
     except Exception:
         err = traceback.format_exc()
-        util.ErrorLog(str(err))
-        slack.slack_message_with_time("과거 데이터베이스 초기화 중 오류가 발생했습니다.\n프로그램을 종료합니다.")
-        ##프로그램 종료
+        logger.error(f"과거 데이터베이스 초기화 중 오류가 발생했습니다.\n{err}")
         sys.exit()
             
             
@@ -42,9 +38,7 @@ if __name__ == "__main__":
 
     except Exception:
         err = traceback.format_exc()
-        util.ErrorLog(str(err))
-        slack.slack_message_with_time("현재 데이터를 과거 데이터로 옮기는 중 오류가 발생했습니다.\n프로그램을 종료합니다.")
-        ##프로그램 종료
+        logger.error(f"현재 데이터를 과거 데이터로 옮기는 중 오류가 발생했습니다.\n{err}")
         sys.exit()
             
             
@@ -52,10 +46,8 @@ if __name__ == "__main__":
     try:
         res = notion_api.reset_database(init.datelist, pages)       
     except Exception:
-        err = traceback.format_exc() 
-        util.ErrorLog(str(err))
-        slack.slack_message_with_time("현재 데이터베이스 초기화 중 오류가 발생했습니다.\n프로그램을 종료합니다.")
-        ##프로그램 종료
+        err = traceback.format_exc()
+        logger.error(f"현재 데이터베이스 초기화 중 오류가 발생했습니다.\n{err}")
         sys.exit()
     
     ##약 루틴 초기화

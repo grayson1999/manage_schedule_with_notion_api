@@ -1,6 +1,6 @@
 from manage_notion_package import notion_api,Myerror,slack,util,init
+from manage_notion_package.logger import logger
 import traceback
-import json
 import sys
 from datetime import datetime
 
@@ -19,39 +19,35 @@ if __name__ == "__main__":
 
     except Exception:
         err = traceback.format_exc()
-        util.ErrorLog(str(err))
-        ##프로그램 종료
+        logger.error(f"달성률 업데이트 중 오류가 발생했습니다.\n{err}")
         sys.exit()
-    
-    
+
+
     ##데이터 베이스 page 삭제
     try:
         res = notion_api.delete_all_pages(past_pages)
     except Exception:
         err = traceback.format_exc()
-        util.ErrorLog(str(err))
-        ##프로그램 종료
+        logger.error(f"과거 데이터베이스 초기화 중 오류가 발생했습니다.\n{err}")
         sys.exit()
-            
-            
+
+
     ##현재 데이터 과거 데이터로 옮기기
     try:
         res = notion_api.move2pastdata(pages)
 
     except Exception:
         err = traceback.format_exc()
-        util.ErrorLog(str(err))
-        ##프로그램 종료
+        logger.error(f"현재 데이터를 과거 데이터로 옮기는 중 오류가 발생했습니다.\n{err}")
         sys.exit()
-            
-            
+
+
     ##현재 데이터 초기화
     try:
-        res = notion_api.reset_database(init.datelist, pages)       
+        res = notion_api.reset_database(init.datelist, pages)
     except Exception:
-        err = traceback.format_exc() 
-        util.ErrorLog(str(err))
-        ##프로그램 종료
+        err = traceback.format_exc()
+        logger.error(f"현재 데이터베이스 초기화 중 오류가 발생했습니다.\n{err}")
         sys.exit()
 
 
