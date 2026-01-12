@@ -26,9 +26,9 @@ def slack_message_with_time(msg):
 
 ## 약 복용 현황을 등급별로 분류
 def categorize_medicine_by_completion(medicine_pages):
-    perfect = []  # 7/7
-    good = []     # 5-6/7
-    need_improvement = []  # 4 이하
+    perfect = []  # 달성 개수 >= 목표 개수
+    good = []     # 달성 개수 >= 목표 개수의 70%
+    need_improvement = []  # 그 외
 
     total_taken = 0
     total_possible = 0
@@ -37,17 +37,21 @@ def categorize_medicine_by_completion(medicine_pages):
         page_props = page["properties"]
         title = page_props["이름"]["title"][0]["plain_text"]
 
+        # 달성 개수 계산
         check_count = 0
         for date in datelist:
             if page_props[date]["checkbox"] == True:
                 check_count += 1
 
-        total_taken += check_count
-        total_possible += 7
+        # 목표 개수 가져오기 (없으면 기본값 7)
+        target_count = page_props.get("목표 개수", {}).get("number", 7) or 7
 
-        if check_count == 7:
+        total_taken += check_count
+        total_possible += target_count
+
+        if check_count >= target_count:
             perfect.append(title)
-        elif check_count >= 5:
+        elif check_count >= target_count * 0.7:
             good.append(title)
         else:
             need_improvement.append(title)
@@ -132,6 +136,7 @@ if __name__ == "__main__":
         {
             "properties": {
                 "이름": {"title": [{"plain_text": "비타민D"}]},
+                "목표 개수": {"number": 7},
                 "Mon": {"checkbox": True},
                 "Tue": {"checkbox": True},
                 "Wed": {"checkbox": True},
@@ -144,6 +149,7 @@ if __name__ == "__main__":
         {
             "properties": {
                 "이름": {"title": [{"plain_text": "오메가3"}]},
+                "목표 개수": {"number": 7},
                 "Mon": {"checkbox": True},
                 "Tue": {"checkbox": True},
                 "Wed": {"checkbox": True},
@@ -156,6 +162,7 @@ if __name__ == "__main__":
         {
             "properties": {
                 "이름": {"title": [{"plain_text": "종합비타민"}]},
+                "목표 개수": {"number": 5},
                 "Mon": {"checkbox": True},
                 "Tue": {"checkbox": True},
                 "Wed": {"checkbox": True},
@@ -168,6 +175,7 @@ if __name__ == "__main__":
         {
             "properties": {
                 "이름": {"title": [{"plain_text": "마그네슘"}]},
+                "목표 개수": {"number": 7},
                 "Mon": {"checkbox": True},
                 "Tue": {"checkbox": True},
                 "Wed": {"checkbox": True},
@@ -180,11 +188,12 @@ if __name__ == "__main__":
         {
             "properties": {
                 "이름": {"title": [{"plain_text": "유산균"}]},
+                "목표 개수": {"number": 3},
                 "Mon": {"checkbox": True},
                 "Tue": {"checkbox": True},
                 "Wed": {"checkbox": True},
-                "Thur": {"checkbox": True},
-                "Fri": {"checkbox": True},
+                "Thur": {"checkbox": False},
+                "Fri": {"checkbox": False},
                 "Sat": {"checkbox": False},
                 "Sun": {"checkbox": False}
             }
