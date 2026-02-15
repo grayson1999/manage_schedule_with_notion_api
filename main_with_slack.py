@@ -1,4 +1,4 @@
-from manage_notion_package import notion_api,Myerror,slack,util,init
+from manage_notion_package import notion_api,Myerror,slack,util,init,achievement_tracker
 from manage_notion_package.logger import logger
 import traceback
 import sys
@@ -11,9 +11,21 @@ achievement_pages = notion_api.get_pages(init.ACHIEVEMENT_DATABASE_ID)
 medicine_pages = notion_api.get_pages(init.MEDICINE_DATABASE_ID)
 
 if __name__ == "__main__":
+    ## 개별 달성률 계산
+    routine_items = []
+    medicine_items = []
+    achievement_note = None
+    try:
+        routine_items = achievement_tracker.calculate_per_item_achievement(pages, init.datelist)
+        medicine_items = achievement_tracker.calculate_per_item_achievement(medicine_pages, init.datelist)
+        achievement_note = achievement_tracker.build_achievement_note(routine_items, medicine_items)
+    except Exception:
+        err = traceback.format_exc()
+        logger.error(f"개별 달성률 계산 중 오류가 발생했습니다.\n{err}")
+
     ## 달성률 업데이트
     try:
-        res = notion_api.update_achievement_rate(achievement_pages,pages)
+        res = notion_api.update_achievement_rate(achievement_pages, pages, achievement_note)
         if str(res) != "<Response [200]>":
             raise Myerror.Achieve_update_error
 
@@ -58,6 +70,7 @@ if __name__ == "__main__":
     weekly_report = slack.create_weekly_report(
         achievement_rate=notion_api.ACHEVEMENT_RATE,
         medicine_pages=medicine_pages,
-        week_name=week_name
+        week_name=week_name,
+        routine_items=routine_items,
     )
     slack.slack_message(weekly_report)

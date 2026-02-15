@@ -71,6 +71,25 @@ def create_progress_bar(percentage, length=20):
     empty = length - filled
     return "█" * filled + "▓" * empty
 
+## 개별 항목 달성률 섹션 포맷
+def format_per_item_section(
+    items: list[dict],
+    section_title: str = "개별 루틴 현황",
+) -> str:
+    """개별 항목별 달성 현황을 진행바와 함께 포맷한다."""
+    if not items:
+        return ""
+
+    bar_length = 7
+    lines = [section_title]
+    for item in items:
+        pct = min(item["rate"], 1.0) * 100
+        bar = create_progress_bar(pct, length=bar_length)
+        lines.append(f" \u2022 {item['name']:<6} {item['achieved']}/{item['target']}  {bar} {pct:.0f}%")
+
+    return "\n".join(lines)
+
+
 ## 랜덤 명언 가져오기
 def get_random_advice():
     try:
@@ -88,7 +107,7 @@ def get_random_advice():
         return '"작은 습관이 모여 큰 변화를 만든다"'
 
 ## 주간 리포트 생성
-def create_weekly_report(achievement_rate, medicine_pages, week_name):
+def create_weekly_report(achievement_rate, medicine_pages, week_name, routine_items: list[dict] | None = None):
     # 약 복용 현황 분석
     medicine_stats = categorize_medicine_by_completion(medicine_pages)
     medicine_percentage = (medicine_stats['total_taken'] / medicine_stats['total_possible'] * 100) if medicine_stats['total_possible'] > 0 else 0
@@ -103,6 +122,11 @@ def create_weekly_report(achievement_rate, medicine_pages, week_name):
     # 랜덤 명언 가져오기
     advice = get_random_advice()
 
+    # 개별 루틴 현황 섹션
+    per_item_section = ""
+    if routine_items:
+        per_item_section = "\n" + format_per_item_section(routine_items, "📋 개별 루틴 현황")
+
     # 리포트 생성 (모바일 최적화 - 심플 버전)
     report = f"""━━━━━━━━━━━━━━━
 📊 주간 루틴 완료 리포트
@@ -110,7 +134,7 @@ def create_weekly_report(achievement_rate, medicine_pages, week_name):
 ⏰ {datetime_format}
 
 🎯 루틴 달성률
-{routine_bar} {achievement_rate * 100:.1f}%
+{routine_bar} {achievement_rate * 100:.1f}%{per_item_section}
 
 💊 약 복용 현황 ({medicine_stats['medicine_count']}종)
 {medicine_bar} {medicine_percentage:.1f}%

@@ -100,7 +100,7 @@ def delete_all_pages(past_pages):
         delete_page(page["id"])
 
 ## 달성률 db에 업데이트
-def update_achievement_rate(achievement_pages,current_pages):
+def update_achievement_rate(achievement_pages, current_pages, achievement_note: str | None = None):
     ## 달성률 구하기
     def calc_achevement_rate(current_pages):
         count = 0
@@ -147,6 +147,11 @@ def update_achievement_rate(achievement_pages,current_pages):
         }
         }
     }
+
+    if achievement_note:
+        convert_achi_dict["properties"]["비고"] = {
+            "rich_text": [{"text": {"content": achievement_note}}]
+        }
 
     return create_page(convert_achi_dict, ACHIEVEMENT_DATABASE_ID)
 
