@@ -1,7 +1,8 @@
 import json
-import requests 
+import requests
 from .init import *
 from .util import get_today_week_name
+from .logger import logger
 
 ACHEVEMENT_RATE = 0
 ## get_database_source
@@ -9,28 +10,44 @@ def get_pages(database_id, num_pages=None):
     """
     If num_pages is None, get all pages, otherwise just the defined number.
     """
+    if not database_id:
+        logger.error("get_pages 호출 실패 - database_id가 비어있습니다")
+        return []
+
     url = f"https://api.notion.com/v1/databases/{database_id}/query"
 
     get_all = num_pages is None
     page_size = 100 if get_all else num_pages
 
     payload = {"page_size": page_size}
-    response = requests.post(url, json=payload, headers=headers)
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Notion API 호출 실패 (db: {database_id[:8]}...): {e}")
+        return []
 
     data = response.json()
 
-    # Comment this out to dump all data to a file
-    # import json
-    # with open('db.json', 'w', encoding='utf8') as f:
-    #    json.dump(data, f, ensure_ascii=False, indent=4)
+    if data.get("object") == "error":
+        logger.error(f"Notion API 에러 (db: {database_id[:8]}...): {data.get('message', 'unknown')}")
+        return []
+
     results = data["results"]
     while data["has_more"] and get_all:
         payload = {"page_size": page_size, "start_cursor": data["next_cursor"]}
         url = f"https://api.notion.com/v1/databases/{database_id}/query"
-        response = requests.post(url, json=payload, headers=headers)
+        try:
+            response = requests.post(url, json=payload, headers=headers)
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Notion API 페이지네이션 실패 (db: {database_id[:8]}...): {e}")
+            break
         data = response.json()
+        if data.get("object") == "error":
+            logger.error(f"Notion API 페이지네이션 에러 (db: {database_id[:8]}...): {data.get('message', 'unknown')}")
+            break
         results.extend(data["results"])
 
+    logger.info(f"get_pages 완료 - {len(results)}개 페이지 (db: {database_id[:8]}...)")
     return results
 
 ## Creating pages in a Notion database

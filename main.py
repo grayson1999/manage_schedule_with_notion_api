@@ -1,4 +1,4 @@
-from manage_notion_package import notion_api,Myerror,slack,util,init
+from manage_notion_package import notion_api,Myerror,telegram,util,init
 from manage_notion_package.logger import logger
 import traceback
 import sys

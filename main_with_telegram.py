@@ -1,8 +1,7 @@
-from manage_notion_package import notion_api,Myerror,slack,util,init,achievement_tracker
+from manage_notion_package import notion_api,Myerror,telegram,util,init,achievement_tracker
 from manage_notion_package.logger import logger
 import traceback
 import sys
-from datetime import datetime
 
 ##페이지 가져오기
 past_pages = notion_api.get_pages(init.PAST_DATABASE_ID)
@@ -10,18 +9,27 @@ pages = notion_api.get_pages(init.DATABASE_ID)
 achievement_pages = notion_api.get_pages(init.ACHIEVEMENT_DATABASE_ID)
 medicine_pages = notion_api.get_pages(init.MEDICINE_DATABASE_ID)
 
+logger.info(f"페이지 조회 - 현재: {len(pages)}개, 약: {len(medicine_pages)}개")
+if not pages:
+    logger.warning("루틴 페이지가 0개입니다. CURRENT_DATABASE_ID 확인 필요")
+
 if __name__ == "__main__":
     ## 개별 달성률 계산
     routine_items = []
     medicine_items = []
     achievement_note = None
     try:
-        routine_items = achievement_tracker.calculate_per_item_achievement(pages, init.datelist)
+        routine_items = achievement_tracker.calculate_per_item_achievement(
+            pages, init.datelist, title_key="할일", target_key="달성 목표(횟수)",
+        )
         medicine_items = achievement_tracker.calculate_per_item_achievement(medicine_pages, init.datelist)
         achievement_note = achievement_tracker.build_achievement_note(routine_items, medicine_items)
     except Exception:
         err = traceback.format_exc()
         logger.error(f"개별 달성률 계산 중 오류가 발생했습니다.\n{err}")
+
+    if not routine_items:
+        logger.warning("routine_items가 비어있습니다. 루틴 데이터를 확인하세요.")
 
     ## 달성률 업데이트
     try:
@@ -33,8 +41,8 @@ if __name__ == "__main__":
         err = traceback.format_exc()
         logger.error(f"달성률 업데이트 중 오류가 발생했습니다.\n{err}")
         sys.exit()
-    
-    
+
+
     ##과거 데이터 베이스 DB 초기화(내부 page 전체 삭제)
     try:
         res = notion_api.delete_all_pages(past_pages)
@@ -42,8 +50,8 @@ if __name__ == "__main__":
         err = traceback.format_exc()
         logger.error(f"과거 데이터베이스 초기화 중 오류가 발생했습니다.\n{err}")
         sys.exit()
-            
-            
+
+
     ##현재 데이터 과거 데이터로 옮기기
     try:
         res = notion_api.move2pastdata(pages)
@@ -52,25 +60,25 @@ if __name__ == "__main__":
         err = traceback.format_exc()
         logger.error(f"현재 데이터를 과거 데이터로 옮기는 중 오류가 발생했습니다.\n{err}")
         sys.exit()
-            
-            
+
+
     ##현재 데이터 초기화
     try:
-        res = notion_api.reset_database(init.datelist, pages)       
+        res = notion_api.reset_database(init.datelist, pages)
     except Exception:
         err = traceback.format_exc()
         logger.error(f"현재 데이터베이스 초기화 중 오류가 발생했습니다.\n{err}")
         sys.exit()
-    
+
     ##약 루틴 초기화
     notion_api.reset_database(init.datelist,medicine_pages)
 
     ##주간 리포트 생성 및 전송
     week_name = util.get_today_week_name()
-    weekly_report = slack.create_weekly_report(
+    weekly_report = telegram.create_weekly_report(
         achievement_rate=notion_api.ACHEVEMENT_RATE,
         medicine_pages=medicine_pages,
         week_name=week_name,
         routine_items=routine_items,
     )
-    slack.slack_message(weekly_report)
+    telegram.send_message(weekly_report)

@@ -133,14 +133,14 @@ class TestBuildAchievementNote(unittest.TestCase):
         self.build = build_achievement_note
 
     def test_json_structure(self):
-        """JSON에 date, iso_week, routine, medicine 키가 있어야 한다."""
+        """JSON에 date, iso_week, routine, medicine_rate 키가 있어야 한다."""
         note_str = self.build(self.routine_items, self.medicine_items)
         note = json.loads(note_str)
 
         self.assertIn("date", note)
         self.assertIn("iso_week", note)
         self.assertIn("routine", note)
-        self.assertIn("medicine", note)
+        self.assertIn("medicine_rate", note)
 
     def test_routine_items_in_json(self):
         """routine 항목이 name, achieved, target, rate를 포함해야 한다."""
@@ -153,11 +153,13 @@ class TestBuildAchievementNote(unittest.TestCase):
         self.assertEqual(first["target"], 7)
         self.assertAlmostEqual(first["rate"], 5 / 7, places=4)
 
-    def test_medicine_items_in_json(self):
-        """medicine 항목이 포함되어야 한다."""
+    def test_medicine_rate_in_json(self):
+        """medicine_rate가 단일 숫자로 포함되어야 한다."""
         note = json.loads(self.build(self.routine_items, self.medicine_items))
-        self.assertEqual(len(note["medicine"]), 2)
-        self.assertEqual(note["medicine"][0]["name"], "비타민D")
+        self.assertIn("medicine_rate", note)
+        self.assertIsInstance(note["medicine_rate"], float)
+        # 비타민D: 7/7, 오메가3: 6/7 → total: 13/14
+        self.assertAlmostEqual(note["medicine_rate"], 13 / 14, places=4)
 
     def test_days_excluded_from_json(self):
         """days 필드는 JSON에 포함되지 않아야 한다 (2000자 제한 대응)."""
@@ -191,7 +193,7 @@ class TestBuildAchievementNote(unittest.TestCase):
         """빈 항목으로도 유효한 JSON이 생성되어야 한다."""
         note = json.loads(self.build([], []))
         self.assertEqual(note["routine"], [])
-        self.assertEqual(note["medicine"], [])
+        self.assertAlmostEqual(note["medicine_rate"], 0.0)
 
 
 class TestUpdateAchievementRateWithNote(unittest.TestCase):
@@ -247,7 +249,7 @@ class TestUpdateAchievementRateWithNote(unittest.TestCase):
         self.assertIn("date", parsed)
         self.assertIn("iso_week", parsed)
         self.assertIn("routine", parsed)
-        self.assertIn("medicine", parsed)
+        self.assertIn("medicine_rate", parsed)
 
         # routine 항목 검증
         self.assertEqual(len(parsed["routine"]), 3)
@@ -298,10 +300,10 @@ class TestUpdateAchievementRateWithNote(unittest.TestCase):
 
 
 class TestFormatPerItemSection(unittest.TestCase):
-    """slack.format_per_item_section 단위 테스트."""
+    """telegram.format_per_item_section 단위 테스트."""
 
     def setUp(self):
-        from manage_notion_package.slack import format_per_item_section
+        from manage_notion_package.telegram import format_per_item_section
         from manage_notion_package.achievement_tracker import calculate_per_item_achievement
         self.format = format_per_item_section
         self.items = calculate_per_item_achievement(ROUTINE_PAGES, DATELIST)
@@ -343,10 +345,10 @@ class TestWeeklyReportIntegration(unittest.TestCase):
         from manage_notion_package.achievement_tracker import calculate_per_item_achievement
         self.routine_items = calculate_per_item_achievement(ROUTINE_PAGES, DATELIST)
 
-    @patch("manage_notion_package.slack.get_random_advice", return_value='"테스트 명언"')
+    @patch("manage_notion_package.telegram.get_random_advice", return_value=("테스트 명언", "작자미상"))
     def test_report_with_routine_items(self, mock_advice):
         """routine_items가 있으면 개별 루틴 현황이 리포트에 포함되어야 한다."""
-        from manage_notion_package.slack import create_weekly_report
+        from manage_notion_package.telegram import create_weekly_report
 
         report = create_weekly_report(
             achievement_rate=0.857,
@@ -359,10 +361,10 @@ class TestWeeklyReportIntegration(unittest.TestCase):
         self.assertIn("운동", report)
         self.assertIn("5/7", report)
 
-    @patch("manage_notion_package.slack.get_random_advice", return_value='"테스트 명언"')
+    @patch("manage_notion_package.telegram.get_random_advice", return_value=("테스트 명언", "작자미상"))
     def test_report_without_routine_items(self, mock_advice):
-        """routine_items=None이면 개별 루틴 현황이 없어야 한다."""
-        from manage_notion_package.slack import create_weekly_report
+        """routine_items=None이면 경고 메시지가 표시되어야 한다."""
+        from manage_notion_package.telegram import create_weekly_report
 
         report = create_weekly_report(
             achievement_rate=0.857,
@@ -371,11 +373,12 @@ class TestWeeklyReportIntegration(unittest.TestCase):
         )
 
         self.assertNotIn("📋 개별 루틴 현황", report)
+        self.assertIn("루틴 데이터가 없습니다", report)
 
-    @patch("manage_notion_package.slack.get_random_advice", return_value='"테스트 명언"')
+    @patch("manage_notion_package.telegram.get_random_advice", return_value=("테스트 명언", "작자미상"))
     def test_report_empty_routine_items(self, mock_advice):
-        """routine_items=[]이면 개별 루틴 현황이 없어야 한다."""
-        from manage_notion_package.slack import create_weekly_report
+        """routine_items=[]이면 경고 메시지가 표시되어야 한다."""
+        from manage_notion_package.telegram import create_weekly_report
 
         report = create_weekly_report(
             achievement_rate=0.857,
@@ -385,11 +388,12 @@ class TestWeeklyReportIntegration(unittest.TestCase):
         )
 
         self.assertNotIn("📋 개별 루틴 현황", report)
+        self.assertIn("루틴 데이터가 없습니다", report)
 
-    @patch("manage_notion_package.slack.get_random_advice", return_value='"테스트 명언"')
+    @patch("manage_notion_package.telegram.get_random_advice", return_value=("테스트 명언", "작자미상"))
     def test_no_double_blank_line_without_items(self, mock_advice):
         """routine_items가 없을 때 빈 줄이 연속 2개 이상 나오지 않아야 한다."""
-        from manage_notion_package.slack import create_weekly_report
+        from manage_notion_package.telegram import create_weekly_report
 
         report = create_weekly_report(
             achievement_rate=0.857,
@@ -461,9 +465,8 @@ class TestEndToEndWorkflow(unittest.TestCase):
         note_json = props["비고"]["rich_text"][0]["text"]["content"]
         parsed = json.loads(note_json)
 
-        # 루틴 3개, 약 2개
+        # 루틴 3개
         self.assertEqual(len(parsed["routine"]), 3)
-        self.assertEqual(len(parsed["medicine"]), 2)
 
         # 운동 5/7 검증
         exercise = next(r for r in parsed["routine"] if r["name"] == "운동")
@@ -475,10 +478,9 @@ class TestEndToEndWorkflow(unittest.TestCase):
         self.assertEqual(english["achieved"], 7)
         self.assertEqual(english["rate"], 1.0)
 
-        # 비타민D 7/7 검증
-        vitamin = next(m for m in parsed["medicine"] if m["name"] == "비타민D")
-        self.assertEqual(vitamin["achieved"], 7)
-        self.assertEqual(vitamin["rate"], 1.0)
+        # medicine_rate: 비타민D 7/7 + 오메가3 6/7 = 13/14
+        self.assertIn("medicine_rate", parsed)
+        self.assertAlmostEqual(parsed["medicine_rate"], 13 / 14, places=4)
 
     @patch("manage_notion_package.notion_api.create_page")
     @patch("manage_notion_package.notion_api.get_today_week_name", return_value="2월 셋째 주")
